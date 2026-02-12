@@ -1,0 +1,173 @@
+﻿@model IEnumerable<SharpEstate.Models.Imovel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Titulo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Descricao)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TipoNegocio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Preco)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quartos)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CasasBanho)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AreaUtil)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AreaBrutaPrivativa)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Estacionamento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Certificado)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Estado)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AnoConstrucao)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumeroFrentes)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumeroPisos)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Vistas)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrientacaoSolar)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Distrito)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Concelho)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Freguesia)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Zona)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EnderecoCompleto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataAngariacao)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConsultorId)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Titulo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Descricao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TipoNegocio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Preco)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quartos)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CasasBanho)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AreaUtil)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AreaBrutaPrivativa)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Estacionamento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Certificado)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Estado)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AnoConstrucao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumeroFrentes)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumeroPisos)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Vistas)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrientacaoSolar)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Distrito)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Concelho)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Freguesia)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Zona)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EnderecoCompleto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataAngariacao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ConsultorId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
