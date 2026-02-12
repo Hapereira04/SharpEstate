@@ -1,0 +1,257 @@
+﻿@model SharpEstate.Models.Imovel
+
+@{
+    ViewData["Title"] = "Novo Imóvel";
+}
+
+<div class="container mt-4">
+    <h1>Criar Novo Imóvel</h1>
+    <hr />
+
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">🏡 Dados Principais</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group mb-3">
+                            <label asp-for="Titulo" class="control-label fw-bold"></label>
+                            <input asp-for="Titulo" class="form-control" placeholder="Ex: T2 Renovado no Centro" />
+                            <span asp-validation-for="Titulo" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-3">
+                                <label asp-for="Preco" class="control-label fw-bold"></label>
+                                <input asp-for="Preco" class="form-control" />
+                                <span asp-validation-for="Preco" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 form-group mb-3">
+                                <label asp-for="TipoNegocio" class="control-label fw-bold"></label>
+                                <select asp-for="TipoNegocio" class="form-select" asp-items="Html.GetEnumSelectList<SharpEstate.Models.TipoNegocio>()"></select>
+                                <span asp-validation-for="TipoNegocio" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Descricao" class="control-label"></label>
+                            <textarea asp-for="Descricao" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Descricao" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">📍 Localização</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-3">
+                                <label asp-for="Distrito" class="control-label"></label>
+                                <input asp-for="Distrito" class="form-control" />
+                                <span asp-validation-for="Distrito" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 form-group mb-3">
+                                <label asp-for="Concelho" class="control-label"></label>
+                                <input asp-for="Concelho" class="form-control" />
+                                <span asp-validation-for="Concelho" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Freguesia" class="control-label"></label>
+                            <input asp-for="Freguesia" class="form-control" />
+                            <span asp-validation-for="Freguesia" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">📏 Detalhes e Áreas</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4 form-group mb-3">
+                                <label asp-for="Quartos" class="control-label"></label>
+                                <input asp-for="Quartos" class="form-control" />
+                                <span asp-validation-for="Quartos" class="text-danger"></span>
+                            </div>
+                            <div class="col-4 form-group mb-3">
+                                <label asp-for="CasasBanho" class="control-label"></label>
+                                <input asp-for="CasasBanho" class="form-control" />
+                                <span asp-validation-for="CasasBanho" class="text-danger"></span>
+                            </div>
+                            <div class="col-4 form-group mb-3">
+                                <label asp-for="Estacionamento" class="control-label"></label>
+                                <input asp-for="Estacionamento" class="form-control" />
+                                <span asp-validation-for="Estacionamento" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-3">
+                                <label asp-for="AreaUtil" class="control-label"></label>
+                                <input asp-for="AreaUtil" class="form-control" />
+                                <span asp-validation-for="AreaUtil" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 form-group mb-3">
+                                <label asp-for="Certificado" class="control-label"></label>
+                                <select asp-for="Certificado" class="form-select" asp-items="Html.GetEnumSelectList<SharpEstate.Models.CertificadoEnergetico>()"></select>
+                                <span asp-validation-for="Certificado" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Estado" class="control-label"></label>
+                            <select asp-for="Estado" class="form-select" asp-items="Html.GetEnumSelectList<SharpEstate.Models.EstadoImovel>()"></select>
+                            <span asp-validation-for="Estado" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4 border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">📸 Multimédia</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="control-label mb-2">Selecione as fotos (pode escolher várias)</label>
+                            <input type="file" id="fotosInput" name="fotosUpload" multiple class="form-control" accept="image/*" />
+                            <small class="text-muted d-block mt-1">Formatos aceites: JPG, PNG, WebP.</small>
+                        </div>
+
+                        <div class="row mt-3 g-2" id="previewContainer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group mt-3 mb-5 text-end">
+            <a asp-action="Index" class="btn btn-secondary me-2">Voltar à Lista</a>
+            <input type="submit" value="Criar Imóvel" class="btn btn-success btn-lg px-5" />
+        </div>
+    </form>
+</div>
+
+<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Pré-visualização</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center bg-dark">
+                <img id="modalImage" src="" class="img-fluid" style="max-height: 85vh;" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+    <script>
+        let ficheirosOriginais = []; // Guarda os ficheiros reais
+
+        document.getElementById('fotosInput').addEventListener('change', function(event) {
+            var container = document.getElementById('previewContainer');
+            container.innerHTML = '';
+
+            // Guarda a lista de ficheiros num Array que podemos manipular
+            ficheirosOriginais = Array.from(event.target.files);
+
+            if (ficheirosOriginais.length > 0) {
+                ficheirosOriginais.forEach((file, index) => {
+                    if (!file.type.match('image.*')) return;
+
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Div que podemos arrastar
+                        var colDiv = document.createElement('div');
+                        colDiv.className = 'col-3 sortable-item position-relative';
+                        colDiv.dataset.index = index; // Lembra a posição original
+
+                        var cardDiv = document.createElement('div');
+                        cardDiv.className = 'card shadow-sm h-100 border-0';
+                        cardDiv.style.cursor = 'grab'; // Rato vira "mãozinha"
+
+                        var img = document.createElement('img');
+                        img.className = 'card-img-top rounded';
+                        img.src = e.target.result;
+                        img.style.height = '100px';
+                        img.style.objectFit = 'cover';
+
+                        // Etiqueta com o número da ordem
+                        var badge = document.createElement('span');
+                        badge.className = 'badge bg-primary position-absolute top-0 start-0 m-2 ordem-badge';
+                        badge.innerText = index + 1;
+
+                        // Botão de ampliar (lupa)
+                        var zoomBtn = document.createElement('button');
+                        zoomBtn.type = 'button';
+                        zoomBtn.className = 'btn btn-sm btn-dark position-absolute bottom-0 end-0 m-2';
+                        zoomBtn.innerHTML = '🔍';
+                        zoomBtn.onclick = function(ev) {
+                            ev.stopPropagation(); // Impede o drag ao clicar na lupa
+                            document.getElementById('modalImage').src = e.target.result;
+                            new bootstrap.Modal(document.getElementById('imagePreviewModal')).show();
+                        };
+
+                        cardDiv.appendChild(badge);
+                        cardDiv.appendChild(zoomBtn);
+                        cardDiv.appendChild(img);
+                        colDiv.appendChild(cardDiv);
+                        container.appendChild(colDiv);
+                    };
+                    reader.readAsDataURL(file);
+                });
+
+                // Espera um bocadinho para desenhar as fotos e ativa o Arrastar
+                setTimeout(ativarDragAndDrop, 200);
+            }
+        });
+
+        function ativarDragAndDrop() {
+            var el = document.getElementById('previewContainer');
+            new Sortable(el, {
+                animation: 150,
+                ghostClass: 'opacity-50', // Efeito transparente ao arrastar
+                onEnd: function () {
+                    atualizarOrdemNoFormulario(); // Atualiza o input secreto quando largar
+                }
+            });
+        }
+
+        function atualizarOrdemNoFormulario() {
+            var container = document.getElementById('previewContainer');
+            var items = container.querySelectorAll('.sortable-item');
+
+            // Cria um novo "pacote" de ficheiros vazio
+            var dataTransfer = new DataTransfer();
+
+            items.forEach((item, novaPosicao) => {
+                // Atualiza o número na etiqueta visual (1, 2, 3...)
+                item.querySelector('.ordem-badge').innerText = novaPosicao + 1;
+
+                // Vai buscar o ficheiro original usando o index que estava guardado
+                var indexOriginal = parseInt(item.dataset.index);
+                dataTransfer.items.add(ficheirosOriginais[indexOriginal]);
+            });
+
+            // A MÁGICA: Substitui os ficheiros do input pela nossa nova lista ordenada!
+            document.getElementById('fotosInput').files = dataTransfer.files;
+        }
+    </script>
+}

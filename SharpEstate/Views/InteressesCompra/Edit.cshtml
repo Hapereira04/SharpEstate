@@ -1,0 +1,54 @@
+﻿@model SharpEstate.Models.InteresseCompra
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>InteresseCompra</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ClienteId" />
+            <div class="form-group">
+                <label asp-for="PrecoMaximo" class="control-label"></label>
+                <input asp-for="PrecoMaximo" class="form-control" />
+                <span asp-validation-for="PrecoMaximo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Tipologias" class="control-label"></label>
+                <input asp-for="Tipologias" class="form-control" />
+                <span asp-validation-for="Tipologias" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Concelhos" class="control-label"></label>
+                <input asp-for="Concelhos" class="form-control" />
+                <span asp-validation-for="Concelhos" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Urgencia" class="control-label"></label>
+                <select asp-for="Urgencia" class="form-control"></select>
+                <span asp-validation-for="Urgencia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DataRegisto" class="control-label"></label>
+                <input asp-for="DataRegisto" class="form-control" />
+                <span asp-validation-for="DataRegisto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
