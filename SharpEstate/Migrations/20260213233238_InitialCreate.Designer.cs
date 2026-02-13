@@ -9,10 +9,10 @@ using SharpEstate.Data;
 
 #nullable disable
 
-namespace SharpEstate.Data.Migrations
+namespace SharpEstate.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260213150226_InitialCreate")]
+    [Migration("20260213233238_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -244,10 +244,10 @@ namespace SharpEstate.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Caracteristica");
+                    b.ToTable("CaracteristicasCatalogo");
                 });
 
-            modelBuilder.Entity("SharpEstate.Models.CaracteristicaImovel", b =>
+            modelBuilder.Entity("SharpEstate.Models.CategoriaImovel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -255,12 +255,22 @@ namespace SharpEstate.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Grupo")
+                    b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ImovelId")
+                    b.HasKey("Id");
+
+                    b.ToTable("CategoriasImovel");
+                });
+
+            modelBuilder.Entity("SharpEstate.Models.CertificadoEnergetico", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -268,9 +278,7 @@ namespace SharpEstate.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ImovelId");
-
-                    b.ToTable("Caracteristicas");
+                    b.ToTable("CertificadosEnergeticos");
                 });
 
             modelBuilder.Entity("SharpEstate.Models.Cliente", b =>
@@ -281,26 +289,74 @@ namespace SharpEstate.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("DataCadastro")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdentityUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NIF")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Observacoes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Telefone")
-                        .IsRequired()
+                    b.Property<string>("Telemovel")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Clientes");
+                });
+
+            modelBuilder.Entity("SharpEstate.Models.Consultor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FotoUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdentityUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LicencaAMI")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Telemovel")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Consultores");
+                });
+
+            modelBuilder.Entity("SharpEstate.Models.EstadoImovel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EstadosImovel");
                 });
 
             modelBuilder.Entity("SharpEstate.Models.FotoImovel", b =>
@@ -340,11 +396,8 @@ namespace SharpEstate.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AnoConstrucao")
+                    b.Property<int>("AnoConstrucao")
                         .HasColumnType("int");
-
-                    b.Property<double?>("AreaBrutaPrivativa")
-                        .HasColumnType("float");
 
                     b.Property<double>("AreaUtil")
                         .HasColumnType("float");
@@ -352,47 +405,43 @@ namespace SharpEstate.Data.Migrations
                     b.Property<int>("CasasBanho")
                         .HasColumnType("int");
 
-                    b.Property<int>("Certificado")
+                    b.Property<int?>("CategoriaImovelId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CertificadoEnergeticoId")
                         .HasColumnType("int");
 
                     b.Property<string>("Concelho")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ConsultorId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DataAngariacao")
-                        .HasColumnType("datetime2");
+                    b.Property<int?>("ConsultorId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Descricao")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Distrito")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EnderecoCompleto")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Estacionamento")
                         .HasColumnType("int");
 
-                    b.Property<int>("Estado")
+                    b.Property<int?>("EstadoImovelId")
                         .HasColumnType("int");
 
                     b.Property<string>("Freguesia")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("NumeroFrentes")
+                    b.Property<string>("MoradaExata")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NumeroContrato")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumeroFrentes")
                         .HasColumnType("int");
 
-                    b.Property<int?>("NumeroPisos")
-                        .HasColumnType("int");
-
-                    b.Property<string>("OrientacaoSolar")
+                    b.Property<string>("ObservacoesInternas")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Preco")
@@ -401,23 +450,35 @@ namespace SharpEstate.Data.Migrations
                     b.Property<int>("Quartos")
                         .HasColumnType("int");
 
-                    b.Property<int>("Status")
+                    b.Property<int?>("StatusImovelId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TipoNegocio")
+                    b.Property<int?>("TipoNegocioId")
                         .HasColumnType("int");
 
                     b.Property<string>("Titulo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Vistas")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal?>("ValorComissao")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Zona")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoriaImovelId");
+
+                    b.HasIndex("CertificadoEnergeticoId");
+
+                    b.HasIndex("ConsultorId");
+
+                    b.HasIndex("EstadoImovelId");
+
+                    b.HasIndex("StatusImovelId");
+
+                    b.HasIndex("TipoNegocioId");
 
                     b.ToTable("Imoveis");
                 });
@@ -434,7 +495,22 @@ namespace SharpEstate.Data.Migrations
 
                     b.HasIndex("CaracteristicaId");
 
-                    b.ToTable("ImovelCaracteristica");
+                    b.ToTable("ImoveisCaracteristicas");
+                });
+
+            modelBuilder.Entity("SharpEstate.Models.ImovelFavorito", b =>
+                {
+                    b.Property<int>("ImovelId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ImovelId", "ClienteId");
+
+                    b.HasIndex("ClienteId");
+
+                    b.ToTable("ImoveisFavoritos");
                 });
 
             modelBuilder.Entity("SharpEstate.Models.ImovelProprietario", b =>
@@ -452,29 +528,38 @@ namespace SharpEstate.Data.Migrations
                     b.ToTable("ImoveisProprietarios");
                 });
 
-            modelBuilder.Entity("SharpEstate.Models.InteresseCompra", b =>
+            modelBuilder.Entity("SharpEstate.Models.StatusImovel", b =>
                 {
-                    b.Property<int>("ClienteId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Concelhos")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DataRegisto")
-                        .HasColumnType("datetime2");
+                    b.HasKey("Id");
 
-                    b.Property<decimal>("PrecoMaximo")
-                        .HasColumnType("decimal(18,2)");
+                    b.ToTable("StatusImoveis");
+                });
 
-                    b.Property<string>("Tipologias")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Urgencia")
+            modelBuilder.Entity("SharpEstate.Models.TipoNegocio", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.HasKey("ClienteId");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.ToTable("InteressesCompra");
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TiposNegocio");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -528,17 +613,6 @@ namespace SharpEstate.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SharpEstate.Models.CaracteristicaImovel", b =>
-                {
-                    b.HasOne("SharpEstate.Models.Imovel", "Imovel")
-                        .WithMany()
-                        .HasForeignKey("ImovelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Imovel");
-                });
-
             modelBuilder.Entity("SharpEstate.Models.FotoImovel", b =>
                 {
                     b.HasOne("SharpEstate.Models.Imovel", "Imovel")
@@ -548,6 +622,50 @@ namespace SharpEstate.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Imovel");
+                });
+
+            modelBuilder.Entity("SharpEstate.Models.Imovel", b =>
+                {
+                    b.HasOne("SharpEstate.Models.CategoriaImovel", "CategoriaImovel")
+                        .WithMany("Imoveis")
+                        .HasForeignKey("CategoriaImovelId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("SharpEstate.Models.CertificadoEnergetico", "CertificadoEnergetico")
+                        .WithMany("Imoveis")
+                        .HasForeignKey("CertificadoEnergeticoId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("SharpEstate.Models.Consultor", "Consultor")
+                        .WithMany("ImoveisAngariados")
+                        .HasForeignKey("ConsultorId");
+
+                    b.HasOne("SharpEstate.Models.EstadoImovel", "EstadoImovel")
+                        .WithMany("Imoveis")
+                        .HasForeignKey("EstadoImovelId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("SharpEstate.Models.StatusImovel", "StatusImovel")
+                        .WithMany("Imoveis")
+                        .HasForeignKey("StatusImovelId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("SharpEstate.Models.TipoNegocio", "TipoNegocio")
+                        .WithMany("Imoveis")
+                        .HasForeignKey("TipoNegocioId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CategoriaImovel");
+
+                    b.Navigation("CertificadoEnergetico");
+
+                    b.Navigation("Consultor");
+
+                    b.Navigation("EstadoImovel");
+
+                    b.Navigation("StatusImovel");
+
+                    b.Navigation("TipoNegocio");
                 });
 
             modelBuilder.Entity("SharpEstate.Models.ImovelCaracteristica", b =>
@@ -569,10 +687,29 @@ namespace SharpEstate.Data.Migrations
                     b.Navigation("Imovel");
                 });
 
+            modelBuilder.Entity("SharpEstate.Models.ImovelFavorito", b =>
+                {
+                    b.HasOne("SharpEstate.Models.Cliente", "Cliente")
+                        .WithMany("Favoritos")
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SharpEstate.Models.Imovel", "Imovel")
+                        .WithMany("Favoritos")
+                        .HasForeignKey("ImovelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cliente");
+
+                    b.Navigation("Imovel");
+                });
+
             modelBuilder.Entity("SharpEstate.Models.ImovelProprietario", b =>
                 {
                     b.HasOne("SharpEstate.Models.Cliente", "Cliente")
-                        .WithMany("ImoveisProprietario")
+                        .WithMany("ImoveisPropriedade")
                         .HasForeignKey("ClienteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -588,36 +725,57 @@ namespace SharpEstate.Data.Migrations
                     b.Navigation("Imovel");
                 });
 
-            modelBuilder.Entity("SharpEstate.Models.InteresseCompra", b =>
-                {
-                    b.HasOne("SharpEstate.Models.Cliente", "Cliente")
-                        .WithOne("InteresseCompra")
-                        .HasForeignKey("SharpEstate.Models.InteresseCompra", "ClienteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cliente");
-                });
-
             modelBuilder.Entity("SharpEstate.Models.Caracteristica", b =>
                 {
                     b.Navigation("ImoveisCaracteristicas");
                 });
 
+            modelBuilder.Entity("SharpEstate.Models.CategoriaImovel", b =>
+                {
+                    b.Navigation("Imoveis");
+                });
+
+            modelBuilder.Entity("SharpEstate.Models.CertificadoEnergetico", b =>
+                {
+                    b.Navigation("Imoveis");
+                });
+
             modelBuilder.Entity("SharpEstate.Models.Cliente", b =>
                 {
-                    b.Navigation("ImoveisProprietario");
+                    b.Navigation("Favoritos");
 
-                    b.Navigation("InteresseCompra");
+                    b.Navigation("ImoveisPropriedade");
+                });
+
+            modelBuilder.Entity("SharpEstate.Models.Consultor", b =>
+                {
+                    b.Navigation("ImoveisAngariados");
+                });
+
+            modelBuilder.Entity("SharpEstate.Models.EstadoImovel", b =>
+                {
+                    b.Navigation("Imoveis");
                 });
 
             modelBuilder.Entity("SharpEstate.Models.Imovel", b =>
                 {
                     b.Navigation("Caracteristicas");
 
+                    b.Navigation("Favoritos");
+
                     b.Navigation("Fotos");
 
                     b.Navigation("Proprietarios");
+                });
+
+            modelBuilder.Entity("SharpEstate.Models.StatusImovel", b =>
+                {
+                    b.Navigation("Imoveis");
+                });
+
+            modelBuilder.Entity("SharpEstate.Models.TipoNegocio", b =>
+                {
+                    b.Navigation("Imoveis");
                 });
 #pragma warning restore 612, 618
         }

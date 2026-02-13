@@ -1,6 +1,6 @@
 ﻿namespace SharpEstate.Models
 {
-    public class ImovelProprietario
+    public class ImovelFavorito
     {
         public int ImovelId { get; set; }
         public virtual Imovel Imovel { get; set; }

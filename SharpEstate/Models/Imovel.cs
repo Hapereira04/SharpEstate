@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SharpEstate.Models
 {
@@ -7,95 +6,65 @@ namespace SharpEstate.Models
     {
         public int Id { get; set; }
 
-        // --- DADOS PRINCIPAIS ---
-        [Required(ErrorMessage = "O título é obrigatório")]
-        public string Titulo { get; set; } // Ex: T2 no Centro Histórico
-
-        [Display(Name = "Descrição Pública")]
-        public string Descricao { get; set; }
+        // --- DADOS PÚBLICOS ---
+        [Required]
+        public string Titulo { get; set; }
 
         [Required]
-        [Display(Name = "Tipo de Negócio")]
-        public TipoNegocio TipoNegocio { get; set; }
-
-        [Required]
-        [DataType(DataType.Currency)]
-        [Column(TypeName = "decimal(18,2)")]
-        [Display(Name = "Preço")]
         public decimal Preco { get; set; }
 
-        // --- ÁREAS E DIVISÕES ---
-        [Display(Name = "Quartos")]
+        public string? Descricao { get; set; }
         public int Quartos { get; set; }
-
-        [Display(Name = "Casas de Banho")]
         public int CasasBanho { get; set; }
-
-        [Display(Name = "Área Útil (m²)")]
+        public int Estacionamento { get; set; }
         public double AreaUtil { get; set; }
+        public int AnoConstrucao { get; set; }
+        public int NumeroFrentes { get; set; }
 
-        [Display(Name = "Área Bruta Privativa (m²)")]
-        public double? AreaBrutaPrivativa { get; set; }
-
-        [Display(Name = "Estacionamento (Lugares)")]
-        public int Estacionamento { get; set; } = 0;
-
-        // --- DETALHES TÉCNICOS ---
-        [Display(Name = "Certificado Energético")]
-        public CertificadoEnergetico Certificado { get; set; }
-
-        [Display(Name = "Estado")]
-        public EstadoImovel Estado { get; set; }
-
-        [Display(Name = "Ano de Construção")]
-        public int? AnoConstrucao { get; set; }
-
-        // --- CARACTERÍSTICAS GERAIS ---
-        [Display(Name = "Nº de Frentes")]
-        public int? NumeroFrentes { get; set; }
-
-        [Display(Name = "Nº de Pisos")]
-        public int? NumeroPisos { get; set; }
-
-        [Display(Name = "Vistas")]
-        public string? Vistas { get; set; } // Ex: Cidade, Rio
-
-        [Display(Name = "Orientação Solar")]
-        public string? OrientacaoSolar { get; set; } // Ex: Nascente/Poente
-
-        // --- LOCALIZAÇÃO ---
-        [Required]
-        public string Distrito { get; set; } = "Évora"; // Valor padrão
-
-        [Required]
-        public string Concelho { get; set; }
-
-        public string Freguesia { get; set; }
-
-        [Display(Name = "Zona / Bairro")]
+        // Localização (Pública)
+        public string? Distrito { get; set; }
+        public string? Concelho { get; set; }
+        public string? Freguesia { get; set; }
         public string? Zona { get; set; }
 
-        public string? EnderecoCompleto { get; set; } // Privado, só para o consultor
 
-        // --- GESTÃO ---
-        [Display(Name = "Status no Sistema")]
-        public StatusSistema Status { get; set; } = StatusSistema.Disponivel;
+        // --- DADOS PRIVADOS (SÓ O CONSULTOR VÊ) ---
+        [Display(Name = "Morada Exata (Privado)")]
+        public string? MoradaExata { get; set; }
 
-        public DateTime DataAngariacao { get; set; } = DateTime.Now;
+        [Display(Name = "Número do Contrato")]
+        public string? NumeroContrato { get; set; }
 
-        // --- RELACIONAMENTOS ---
+        [Display(Name = "Observações Internas")]
+        public string? ObservacoesInternas { get; set; }
 
-        // Consultor (Quem angariou)
-        public string? ConsultorId { get; set; }
-        // public virtual IdentityUser Consultor { get; set; } (Opcional, se quiser navegar)
+        public decimal? ValorComissao { get; set; }
 
-        // Donos (Muitos para Muitos)
-        public virtual ICollection<ImovelProprietario> Proprietarios { get; set; } = new List<ImovelProprietario>();
 
-        // Características (Checkboxes: "Perto da Escola", "Água de Companhia", etc.)
-        public virtual ICollection<ImovelCaracteristica> Caracteristicas { get; set; } = new List<ImovelCaracteristica>();
+        // --- CHAVES ESTRANGEIRAS (LIGAÇÃO AOS CATÁLOGOS E PESSOAS) ---
+        public int? CategoriaImovelId { get; set; }
+        public virtual CategoriaImovel? CategoriaImovel { get; set; }
 
-        // Fotos
+        public int? TipoNegocioId { get; set; }
+        public virtual TipoNegocio? TipoNegocio { get; set; }
+
+        public int? EstadoImovelId { get; set; }
+        public virtual EstadoImovel? EstadoImovel { get; set; }
+
+        public int? StatusImovelId { get; set; }
+        public virtual StatusImovel? StatusImovel { get; set; }
+
+        public int? CertificadoEnergeticoId { get; set; }
+        public virtual CertificadoEnergetico? CertificadoEnergetico { get; set; }
+
+        public int? ConsultorId { get; set; }
+        public virtual Consultor? Consultor { get; set; }
+
+
+        // --- LISTAS DE LIGAÇÃO (Muitos-para-Muitos) ---
         public virtual ICollection<FotoImovel> Fotos { get; set; } = new List<FotoImovel>();
+        public virtual ICollection<ImovelCaracteristica> Caracteristicas { get; set; } = new List<ImovelCaracteristica>();
+        public virtual ICollection<ImovelProprietario> Proprietarios { get; set; } = new List<ImovelProprietario>();
+        public virtual ICollection<ImovelFavorito> Favoritos { get; set; } = new List<ImovelFavorito>();
     }
 }
