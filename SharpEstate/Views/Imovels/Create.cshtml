@@ -6,10 +6,10 @@
 
 <div class="container mt-4">
     <h1>Criar Novo Imóvel</h1>
-    <hr />
+<hr />
 
     <form asp-action="Create" enctype="multipart/form-data">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <div class="row">
             <div class="col-md-6">
@@ -21,8 +21,8 @@
                         <div class="form-group mb-3">
                             <label asp-for="Titulo" class="control-label fw-bold"></label>
                             <input asp-for="Titulo" class="form-control" placeholder="Ex: T2 Renovado no Centro" />
-                            <span asp-validation-for="Titulo" class="text-danger"></span>
-                        </div>
+                <span asp-validation-for="Titulo" class="text-danger"></span>
+            </div>
 
                         <div class="row">
                             <div class="col-md-6 form-group mb-3">
@@ -38,11 +38,15 @@
                         </div>
 
                         <div class="form-group mb-3">
-                            <label asp-for="Descricao" class="control-label"></label>
+                <label asp-for="Descricao" class="control-label"></label>
                             <textarea asp-for="Descricao" class="form-control" rows="4"></textarea>
-                            <span asp-validation-for="Descricao" class="text-danger"></span>
-                        </div>
-                    </div>
+                <span asp-validation-for="Descricao" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TipoNegocio" class="control-label"></label>
+                <select asp-for="TipoNegocio" class="form-control"></select>
+                <span asp-validation-for="TipoNegocio" class="text-danger"></span>
+            </div>
                 </div>
 
                 <div class="card mb-4">
@@ -75,19 +79,19 @@
                 <div class="card mb-4">
                     <div class="card-header bg-info text-white">
                         <h5 class="mb-0">📏 Detalhes e Áreas</h5>
-                    </div>
+            </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-4 form-group mb-3">
-                                <label asp-for="Quartos" class="control-label"></label>
-                                <input asp-for="Quartos" class="form-control" />
-                                <span asp-validation-for="Quartos" class="text-danger"></span>
-                            </div>
+                <label asp-for="Quartos" class="control-label"></label>
+                <input asp-for="Quartos" class="form-control" />
+                <span asp-validation-for="Quartos" class="text-danger"></span>
+            </div>
                             <div class="col-4 form-group mb-3">
-                                <label asp-for="CasasBanho" class="control-label"></label>
-                                <input asp-for="CasasBanho" class="form-control" />
-                                <span asp-validation-for="CasasBanho" class="text-danger"></span>
-                            </div>
+                <label asp-for="CasasBanho" class="control-label"></label>
+                <input asp-for="CasasBanho" class="form-control" />
+                <span asp-validation-for="CasasBanho" class="text-danger"></span>
+            </div>
                             <div class="col-4 form-group mb-3">
                                 <label asp-for="Estacionamento" class="control-label"></label>
                                 <input asp-for="Estacionamento" class="form-control" />
@@ -97,49 +101,73 @@
 
                         <div class="row">
                             <div class="col-md-6 form-group mb-3">
-                                <label asp-for="AreaUtil" class="control-label"></label>
-                                <input asp-for="AreaUtil" class="form-control" />
-                                <span asp-validation-for="AreaUtil" class="text-danger"></span>
-                            </div>
+                <label asp-for="AreaUtil" class="control-label"></label>
+                <input asp-for="AreaUtil" class="form-control" />
+                <span asp-validation-for="AreaUtil" class="text-danger"></span>
+            </div>
                             <div class="col-md-6 form-group mb-3">
-                                <label asp-for="Certificado" class="control-label"></label>
+                <label asp-for="Certificado" class="control-label"></label>
                                 <select asp-for="Certificado" class="form-select" asp-items="Html.GetEnumSelectList<SharpEstate.Models.CertificadoEnergetico>()"></select>
-                                <span asp-validation-for="Certificado" class="text-danger"></span>
-                            </div>
+                <span asp-validation-for="Certificado" class="text-danger"></span>
+            </div>
                         </div>
 
                         <div class="form-group mb-3">
-                            <label asp-for="Estado" class="control-label"></label>
+                <label asp-for="Estado" class="control-label"></label>
                             <select asp-for="Estado" class="form-select" asp-items="Html.GetEnumSelectList<SharpEstate.Models.EstadoImovel>()"></select>
-                            <span asp-validation-for="Estado" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
+                <span asp-validation-for="Estado" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AnoConstrucao" class="control-label"></label>
+                <input asp-for="AnoConstrucao" class="form-control" />
+                <span asp-validation-for="AnoConstrucao" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumeroFrentes" class="control-label"></label>
+                <input asp-for="NumeroFrentes" class="form-control" />
+                <span asp-validation-for="NumeroFrentes" class="text-danger"></span>
+            </div>
 
                 <div class="card mb-4 border-primary">
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0">📸 Multimédia</h5>
-                    </div>
+            </div>
                     <div class="card-body">
-                        <div class="form-group">
+            <div class="form-group">
                             <label class="control-label mb-2">Selecione as fotos (pode escolher várias)</label>
                             <input type="file" id="fotosInput" name="fotosUpload" multiple class="form-control" accept="image/*" />
                             <small class="text-muted d-block mt-1">Formatos aceites: JPG, PNG, WebP.</small>
-                        </div>
+            </div>
 
                         <div class="row mt-3 g-2" id="previewContainer">
-                        </div>
-                    </div>
-                </div>
             </div>
-        </div>
+            <div class="form-group">
+                <label asp-for="Distrito" class="control-label"></label>
+                <input asp-for="Distrito" class="form-control" />
+                <span asp-validation-for="Distrito" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Concelho" class="control-label"></label>
+                <input asp-for="Concelho" class="form-control" />
+                <span asp-validation-for="Concelho" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Freguesia" class="control-label"></label>
+                <input asp-for="Freguesia" class="form-control" />
+                <span asp-validation-for="Freguesia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Zona" class="control-label"></label>
+                <input asp-for="Zona" class="form-control" />
+                <span asp-validation-for="Zona" class="text-danger"></span>
+            </div>
 
         <div class="form-group mt-3 mb-5 text-end">
             <a asp-action="Index" class="btn btn-secondary me-2">Voltar à Lista</a>
             <input type="submit" value="Criar Imóvel" class="btn btn-success btn-lg px-5" />
-        </div>
+            </div>
     </form>
-</div>
+            </div>
 
 <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -151,7 +179,10 @@
             <div class="modal-body text-center bg-dark">
                 <img id="modalImage" src="" class="img-fluid" style="max-height: 85vh;" />
             </div>
-        </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
     </div>
 </div>
 
