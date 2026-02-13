@@ -44,6 +44,23 @@ namespace SharpEstate.Data
             builder.Entity<InteresseCompra>()
                 .Property(p => p.PrecoMaximo)
                 .HasColumnType("decimal(18,2)");
+
+            builder.Entity<ImovelCaracteristica>()
+                .HasKey(ic => new { ic.ImovelId, ic.CaracteristicaId });
+
+            // Relação Imovel -> ImovelCaracteristica (Se apagar o imóvel, apaga a ligação)
+            builder.Entity<ImovelCaracteristica>()
+                .HasOne(ic => ic.Imovel)
+                .WithMany(i => i.Caracteristicas)
+                .HasForeignKey(ic => ic.ImovelId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Relação Caracteristica -> ImovelCaracteristica (NÃO PODE APAGAR SE ESTIVER EM USO)
+            builder.Entity<ImovelCaracteristica>()
+                .HasOne(ic => ic.Caracteristica)
+                .WithMany(c => c.ImoveisCaracteristicas)
+                .HasForeignKey(ic => ic.CaracteristicaId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

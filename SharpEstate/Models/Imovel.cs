@@ -93,7 +93,7 @@ namespace SharpEstate.Models
         public virtual ICollection<ImovelProprietario> Proprietarios { get; set; } = new List<ImovelProprietario>();
 
         // Características (Checkboxes: "Perto da Escola", "Água de Companhia", etc.)
-        public virtual ICollection<CaracteristicaImovel> Caracteristicas { get; set; } = new List<CaracteristicaImovel>();
+        public virtual ICollection<ImovelCaracteristica> Caracteristicas { get; set; } = new List<ImovelCaracteristica>();
 
         // Fotos
         public virtual ICollection<FotoImovel> Fotos { get; set; } = new List<FotoImovel>();
