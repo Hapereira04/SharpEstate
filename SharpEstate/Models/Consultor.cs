@@ -11,7 +11,9 @@ namespace SharpEstate.Models
         public string? Email { get; set; }
         public string? Telemovel { get; set; }
         public string? LicencaAMI { get; set; }
-        public string? FotoUrl { get; set; }
+        [Display(Name = "Foto de Perfil")]
+        public byte[]? FotoPerfil { get; set; }
+        public string? ContentTypeFoto { get; set; }
 
         // Ligação à tabela de Logins do ASP.NET
         public string? IdentityUserId { get; set; }

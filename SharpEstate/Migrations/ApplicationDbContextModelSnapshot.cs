@@ -286,8 +286,14 @@ namespace SharpEstate.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ContentTypeFoto")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("FotoPerfil")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("IdentityUserId")
                         .HasColumnType("nvarchar(max)");
@@ -315,11 +321,14 @@ namespace SharpEstate.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ContentTypeFoto")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FotoUrl")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("FotoPerfil")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("IdentityUserId")
                         .HasColumnType("nvarchar(max)");

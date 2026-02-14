@@ -15,6 +15,10 @@ namespace SharpEstate.Models
         // Ligação mágica à tabela de Logins do ASP.NET (Pode ser nulo se for só um cliente registado em papel)
         public string? IdentityUserId { get; set; }
 
+        [Display(Name = "Foto de Perfil")]
+        public byte[]? FotoPerfil { get; set; }
+        public string? ContentTypeFoto { get; set; }
+
         // Relações
         public virtual ICollection<ImovelProprietario> ImoveisPropriedade { get; set; } = new List<ImovelProprietario>();
         public virtual ICollection<ImovelFavorito> Favoritos { get; set; } = new List<ImovelFavorito>();
