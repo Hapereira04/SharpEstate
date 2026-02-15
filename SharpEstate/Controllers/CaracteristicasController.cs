@@ -22,7 +22,8 @@ namespace SharpEstate.Controllers
         // GET: Caracteristicas
         public async Task<IActionResult> Index()
         {
-            return View(await _context.CaracteristicasCatalogo.ToListAsync());
+            var applicationDbContext = _context.CaracteristicasCatalogo.Include(c => c.GrupoCaracteristica);
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Caracteristicas/Details/5
@@ -34,6 +35,7 @@ namespace SharpEstate.Controllers
             }
 
             var caracteristica = await _context.CaracteristicasCatalogo
+                .Include(c => c.GrupoCaracteristica)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (caracteristica == null)
             {
@@ -46,6 +48,7 @@ namespace SharpEstate.Controllers
         // GET: Caracteristicas/Create
         public IActionResult Create()
         {
+            ViewData["GrupoCaracteristicaId"] = new SelectList(_context.GruposCaracteristicas, "Id", "Nome");
             return View();
         }
 
@@ -54,7 +57,7 @@ namespace SharpEstate.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Categoria")] Caracteristica caracteristica)
+        public async Task<IActionResult> Create([Bind("Id,Nome,GrupoCaracteristicaId")] Caracteristica caracteristica)
         {
             if (ModelState.IsValid)
             {
@@ -62,6 +65,7 @@ namespace SharpEstate.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["GrupoCaracteristicaId"] = new SelectList(_context.GruposCaracteristicas, "Id", "Nome", caracteristica.GrupoCaracteristicaId);
             return View(caracteristica);
         }
 
@@ -78,6 +82,7 @@ namespace SharpEstate.Controllers
             {
                 return NotFound();
             }
+            ViewData["GrupoCaracteristicaId"] = new SelectList(_context.GruposCaracteristicas, "Id", "Nome", caracteristica.GrupoCaracteristicaId);
             return View(caracteristica);
         }
 
@@ -86,7 +91,7 @@ namespace SharpEstate.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Categoria")] Caracteristica caracteristica)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,GrupoCaracteristicaId")] Caracteristica caracteristica)
         {
             if (id != caracteristica.Id)
             {
@@ -113,6 +118,7 @@ namespace SharpEstate.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["GrupoCaracteristicaId"] = new SelectList(_context.GruposCaracteristicas, "Id", "Nome", caracteristica.GrupoCaracteristicaId);
             return View(caracteristica);
         }
 
@@ -125,6 +131,7 @@ namespace SharpEstate.Controllers
             }
 
             var caracteristica = await _context.CaracteristicasCatalogo
+                .Include(c => c.GrupoCaracteristica)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (caracteristica == null)
             {

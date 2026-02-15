@@ -1,156 +1,222 @@
 ﻿@model SharpEstate.Models.Imovel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.Titulo;
+
+    // 1. Preparar a foto do Consultor
+    string fotoConsultorBase64 = "";
+    if (Model.Consultor != null && Model.Consultor.FotoPerfil != null)
+    {
+        fotoConsultorBase64 = $"data:{Model.Consultor.ContentTypeFoto};base64,{Convert.ToBase64String(Model.Consultor.FotoPerfil)}";
+    }
+
+    // 2. Cálculo Automático do Preço por m² (Área Útil)
+    decimal precoM2 = 0;
+    if (Model.AreaUtil > 0)
+    {
+        precoM2 = Model.Preco / (decimal)Model.AreaUtil;
+    }
+
+    // 3. Agrupar as Características por Categoria (A Magia Dinâmica!)
+    var caracteristicasAgrupadas = Model.Caracteristicas
+        .Where(c => c.Caracteristica != null && c.Caracteristica.GrupoCaracteristica != null)
+        .GroupBy(c => c.Caracteristica.GrupoCaracteristica.Nome)
+        .OrderBy(g => g.Key)
+        .ToList();
 }
 
-<h1>Details</h1>
+<div class="container mt-4 mb-5">
 
-<div>
-    <h4>Imovel</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Titulo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Titulo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Preco)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Preco)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descricao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descricao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Quartos)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Quartos)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CasasBanho)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CasasBanho)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Estacionamento)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Estacionamento)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AreaUtil)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AreaUtil)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AnoConstrucao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AnoConstrucao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NumeroFrentes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NumeroFrentes)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Distrito)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Distrito)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Concelho)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Concelho)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Freguesia)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Freguesia)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Zona)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Zona)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MoradaExata)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MoradaExata)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NumeroContrato)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NumeroContrato)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ObservacoesInternas)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ObservacoesInternas)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ValorComissao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ValorComissao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CategoriaImovel)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CategoriaImovel.Nome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TipoNegocio)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TipoNegocio.Nome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EstadoImovel)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EstadoImovel.Nome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StatusImovel)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StatusImovel.Nome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CertificadoEnergetico)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CertificadoEnergetico.Nome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Consultor)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Consultor.Nome)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4 gap-3">
+        <div>
+            <div class="badge bg-danger mb-2 px-3 py-2 text-uppercase fw-bold shadow-sm">
+                @(Model.TipoNegocio?.Nome ?? "Para Comercialização")
+            </div>
+            <h1 class="fw-bold mb-1" style="font-size: 2.2rem; letter-spacing: -0.5px;">@Model.Titulo</h1>
+            <p class="text-muted fs-5 mb-0">
+                <i class="bi bi-geo-alt-fill text-danger"></i> @Model.Freguesia, @Model.Concelho, @Model.Distrito
+            </p>
+        </div>
+        <div class="text-md-end">
+            <h2 class="fw-bold text-success mb-0" style="font-size: 2.5rem;">@Model.Preco.ToString("C0", new System.Globalization.CultureInfo("pt-PT"))</h2>
+            <p class="text-muted mb-0 small fw-bold">Ref: SHARP-@Model.Id.ToString("D5")</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+
+            <div id="imovelCarousel" class="carousel slide shadow-sm rounded overflow-hidden mb-4 bg-dark" data-bs-ride="carousel" style="min-height: 450px;">
+                <div class="carousel-inner h-100">
+                    @if (Model.Fotos != null && Model.Fotos.Any())
+                    {
+                        var primeiraFoto = true;
+                        // Ordena as fotos pelo número que o Drag & Drop guardou!
+                        foreach (var foto in Model.Fotos.OrderBy(f => f.Ordem))
+                        {
+                            var fotoBase64 = $"data:{foto.ContentType};base64,{Convert.ToBase64String(foto.DadosImagem)}";
+                            <div class="carousel-item @(primeiraFoto ? "active" : "") h-100">
+                                <img src="@fotoBase64" class="d-block w-100 h-100 object-fit-cover" alt="Foto Imóvel">
+                            </div>
+                            primeiraFoto = false;
+                        }
+                    }
+                    else
+                    {
+                        <div class="carousel-item active h-100 d-flex flex-column align-items-center justify-content-center text-secondary bg-light" style="height: 450px;">
+                            <i class="bi bi-camera-fill" style="font-size: 5rem;"></i>
+                            <p class="mt-3 fs-5">Sem fotografias disponíveis</p>
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#imovelCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon bg-dark rounded-circle p-3" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#imovelCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon bg-dark rounded-circle p-3" aria-hidden="true"></span>
+                    <span class="visually-hidden">Próxima</span>
+                </button>
+            </div>
+
+            <div class="row text-center g-3 mb-5">
+                <div class="col-6 col-md-3">
+                    <div class="p-3 border rounded shadow-sm bg-white h-100">
+                        <i class="bi bi-door-open fs-3 text-primary d-block mb-1"></i>
+                        <span class="d-block text-muted small text-uppercase">Quartos</span>
+                        <span class="fs-5 fw-bold">@Model.Quartos</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="p-3 border rounded shadow-sm bg-white h-100">
+                        <i class="bi bi-water fs-3 text-primary d-block mb-1"></i>
+                        <span class="d-block text-muted small text-uppercase">Casas de Banho</span>
+                        <span class="fs-5 fw-bold">@Model.CasasBanho</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="p-3 border rounded shadow-sm bg-white h-100">
+                        <i class="bi bi-rulers fs-3 text-primary d-block mb-1"></i>
+                        <span class="d-block text-muted small text-uppercase">Área Útil</span>
+                        <span class="fs-5 fw-bold">@Model.AreaUtil m²</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="p-3 border rounded shadow-sm bg-white h-100">
+                        <i class="bi bi-aspect-ratio fs-3 text-primary d-block mb-1"></i>
+                        <span class="d-block text-muted small text-uppercase">Área Bruta</span>
+                        <span class="fs-5 fw-bold">@Model.AreaBruta m²</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="p-3 border rounded shadow-sm bg-white h-100">
+                        <i class="bi bi-car-front fs-3 text-primary d-block mb-1"></i>
+                        <span class="d-block text-muted small text-uppercase">Estacionamento</span>
+                        <span class="fs-5 fw-bold">@Model.Estacionamento</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="p-3 border rounded shadow-sm bg-white h-100">
+                        <i class="bi bi-building-up fs-3 text-primary d-block mb-1"></i>
+                        <span class="d-block text-muted small text-uppercase">Piso</span>
+                        <span class="fs-5 fw-bold">@Model.Piso</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="p-3 border rounded shadow-sm bg-white h-100">
+                        <i class="bi bi-patch-check fs-3 text-primary d-block mb-1"></i>
+                        <span class="d-block text-muted small text-uppercase">Cert. Energético</span>
+                        <span class="fs-5 fw-bold text-success">@(Model.CertificadoEnergetico?.Nome ?? "-")</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="p-3 border rounded shadow-sm bg-white h-100">
+                        <i class="bi bi-tags fs-3 text-primary d-block mb-1"></i>
+                        <span class="d-block text-muted small text-uppercase">Preço m²</span>
+                        <span class="fs-5 fw-bold">@precoM2.ToString("C0", new System.Globalization.CultureInfo("pt-PT"))</span>
+                    </div>
+                </div>
+            </div>
+
+            <h4 class="fw-bold mb-3 border-bottom pb-2">Descrição do Imóvel</h4>
+            <p class="fs-6 lh-lg text-justify mb-5" style="white-space: pre-line;">
+                @(string.IsNullOrWhiteSpace(Model.Descricao) ? "Nenhuma descrição disponível para este imóvel." : Model.Descricao)
+            </p>
+
+            <h4 class="fw-bold mb-3 border-bottom pb-2">Outras Características</h4>
+            <div class="row mb-5">
+                <div class="col-md-6 mb-3">
+                    <div class="fw-bold mb-1 text-dark">Geral:</div>
+                    <ul class="list-unstyled text-muted mb-0">
+                        <li><strong>Estado:</strong> @(Model.EstadoImovel?.Nome ?? "-")</li>
+                        <li><strong>Categoria:</strong> @(Model.CategoriaImovel?.Nome ?? "-")</li>
+                        <li><strong>Ano de Construção:</strong> @(Model.AnoConstrucao > 0 ? Model.AnoConstrucao.ToString() : "-")</li>
+                    </ul>
+                </div>
+
+                @foreach (var grupo in caracteristicasAgrupadas)
+                {
+                    <div class="col-md-6 mb-3">
+                        <div class="fw-bold mb-1 text-dark">@grupo.Key:</div>
+                        <ul class="list-unstyled text-muted mb-0">
+                            <li>@string.Join(", ", grupo.Select(g => g.Caracteristica.Nome))</li>
+                        </ul>
+                    </div>
+                }
+            </div>
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="card border-0 shadow position-sticky" style="top: 2rem;">
+                <div class="card-header bg-primary text-white py-3 text-center">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-envelope-paper me-2"></i> Pedir Informação</h5>
+                </div>
+                <div class="card-body p-4 text-center">
+
+                    @if (Model.Consultor != null)
+                    {
+                        if (!string.IsNullOrEmpty(fotoConsultorBase64))
+                        {
+                            <img src="@fotoConsultorBase64" class="rounded-circle object-fit-cover shadow-sm mb-3" style="width: 100px; height: 100px; border: 3px solid var(--primary-color);" alt="Consultor">
+                        }
+                        else
+                        {
+                            <i class="bi bi-person-circle text-secondary d-block mb-3" style="font-size: 5rem;"></i>
+                        }
+
+                        <h5 class="fw-bold mb-1">@Model.Consultor.Nome</h5>
+                        <p class="text-muted small mb-3">Consultor Imobiliário @(Model.Consultor.LicencaAMI != null ? $" | AMI: {Model.Consultor.LicencaAMI}" : "")</p>
+
+                        <a href="tel:@Model.Consultor.Telemovel" class="btn btn-outline-primary w-100 fw-bold mb-2">
+                            <i class="bi bi-telephone-fill me-2"></i> @(string.IsNullOrEmpty(Model.Consultor.Telemovel) ? "Contactar" : Model.Consultor.Telemovel)
+                        </a>
+                    }
+                    else
+                    {
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-1">SharpEstate</h5>
+                            <p class="text-muted small">A sua agência de confiança.</p>
+                        </div>
+                    }
+
+                    <hr class="my-4">
+
+                    <form>
+                        <div class="form-floating mb-3"><input type="text" class="form-control bg-light" placeholder="Nome"><label>O seu Nome</label></div>
+                        <div class="form-floating mb-3"><input type="email" class="form-control bg-light" placeholder="Email"><label>O seu E-mail</label></div>
+                        <div class="form-floating mb-3"><input type="tel" class="form-control bg-light" placeholder="Telefone"><label>Telefone</label></div>
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control bg-light" placeholder="Mensagem" style="height: 100px">Solicito mais informações, sem compromisso, sobre o imóvel SHARP-@Model.Id.ToString("D5").</textarea>
+                            <label>Mensagem</label>
+                        </div>
+                        <button type="button" class="btn btn-danger btn-lg w-100 fw-bold shadow-sm">Enviar Pedido <i class="bi bi-send-fill ms-2"></i></button>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
