@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SharpEstate.Data;
 
@@ -11,9 +12,11 @@ using SharpEstate.Data;
 namespace SharpEstate.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260215184953_RefatoracaoCaracteristicas")]
+    partial class RefatoracaoCaracteristicas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -386,8 +389,8 @@ namespace SharpEstate.Migrations
                     b.Property<int>("ImovelId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Ordem")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsCapa")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 

@@ -10,23 +10,22 @@ using SharpEstate.Models;
 
 namespace SharpEstate.Controllers
 {
-    public class CaracteristicasController : Controller
+    public class GrupoCaracteristicasController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CaracteristicasController(ApplicationDbContext context)
+        public GrupoCaracteristicasController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Caracteristicas
+        // GET: GrupoCaracteristicas
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.CaracteristicasCatalogo.Include(c => c.GrupoCaracteristica);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await _context.GruposCaracteristicas.ToListAsync());
         }
 
-        // GET: Caracteristicas/Details/5
+        // GET: GrupoCaracteristicas/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,42 +33,39 @@ namespace SharpEstate.Controllers
                 return NotFound();
             }
 
-            var caracteristica = await _context.CaracteristicasCatalogo
-                .Include(c => c.GrupoCaracteristica)
+            var grupoCaracteristica = await _context.GruposCaracteristicas
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (caracteristica == null)
+            if (grupoCaracteristica == null)
             {
                 return NotFound();
             }
 
-            return View(caracteristica);
+            return View(grupoCaracteristica);
         }
 
-        // GET: Caracteristicas/Create
+        // GET: GrupoCaracteristicas/Create
         public IActionResult Create()
         {
-            ViewData["GrupoCaracteristicaId"] = new SelectList(_context.GruposCaracteristicas, "Id", "Nome");
             return View();
         }
 
-        // POST: Caracteristicas/Create
+        // POST: GrupoCaracteristicas/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,GrupoCaracteristicaId")] Caracteristica caracteristica)
+        public async Task<IActionResult> Create([Bind("Id,Nome")] GrupoCaracteristica grupoCaracteristica)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(caracteristica);
+                _context.Add(grupoCaracteristica);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GrupoCaracteristicaId"] = new SelectList(_context.GruposCaracteristicas, "Id", "Nome", caracteristica.GrupoCaracteristicaId);
-            return View(caracteristica);
+            return View(grupoCaracteristica);
         }
 
-        // GET: Caracteristicas/Edit/5
+        // GET: GrupoCaracteristicas/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -77,23 +73,22 @@ namespace SharpEstate.Controllers
                 return NotFound();
             }
 
-            var caracteristica = await _context.CaracteristicasCatalogo.FindAsync(id);
-            if (caracteristica == null)
+            var grupoCaracteristica = await _context.GruposCaracteristicas.FindAsync(id);
+            if (grupoCaracteristica == null)
             {
                 return NotFound();
             }
-            ViewData["GrupoCaracteristicaId"] = new SelectList(_context.GruposCaracteristicas, "Id", "Nome", caracteristica.GrupoCaracteristicaId);
-            return View(caracteristica);
+            return View(grupoCaracteristica);
         }
 
-        // POST: Caracteristicas/Edit/5
+        // POST: GrupoCaracteristicas/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,GrupoCaracteristicaId")] Caracteristica caracteristica)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome")] GrupoCaracteristica grupoCaracteristica)
         {
-            if (id != caracteristica.Id)
+            if (id != grupoCaracteristica.Id)
             {
                 return NotFound();
             }
@@ -102,12 +97,12 @@ namespace SharpEstate.Controllers
             {
                 try
                 {
-                    _context.Update(caracteristica);
+                    _context.Update(grupoCaracteristica);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CaracteristicaExists(caracteristica.Id))
+                    if (!GrupoCaracteristicaExists(grupoCaracteristica.Id))
                     {
                         return NotFound();
                     }
@@ -118,11 +113,10 @@ namespace SharpEstate.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GrupoCaracteristicaId"] = new SelectList(_context.GruposCaracteristicas, "Id", "Nome", caracteristica.GrupoCaracteristicaId);
-            return View(caracteristica);
+            return View(grupoCaracteristica);
         }
 
-        // GET: Caracteristicas/Delete/5
+        // GET: GrupoCaracteristicas/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -130,35 +124,34 @@ namespace SharpEstate.Controllers
                 return NotFound();
             }
 
-            var caracteristica = await _context.CaracteristicasCatalogo
-                .Include(c => c.GrupoCaracteristica)
+            var grupoCaracteristica = await _context.GruposCaracteristicas
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (caracteristica == null)
+            if (grupoCaracteristica == null)
             {
                 return NotFound();
             }
 
-            return View(caracteristica);
+            return View(grupoCaracteristica);
         }
 
-        // POST: Caracteristicas/Delete/5
+        // POST: GrupoCaracteristicas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var caracteristica = await _context.CaracteristicasCatalogo.FindAsync(id);
-            if (caracteristica != null)
+            var grupoCaracteristica = await _context.GruposCaracteristicas.FindAsync(id);
+            if (grupoCaracteristica != null)
             {
-                _context.CaracteristicasCatalogo.Remove(caracteristica);
+                _context.GruposCaracteristicas.Remove(grupoCaracteristica);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CaracteristicaExists(int id)
+        private bool GrupoCaracteristicaExists(int id)
         {
-            return _context.CaracteristicasCatalogo.Any(e => e.Id == id);
+            return _context.GruposCaracteristicas.Any(e => e.Id == id);
         }
     }
 }

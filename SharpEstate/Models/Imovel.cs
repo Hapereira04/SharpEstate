@@ -14,10 +14,19 @@ namespace SharpEstate.Models
         public decimal Preco { get; set; }
 
         public string? Descricao { get; set; }
+
         public int Quartos { get; set; }
         public int CasasBanho { get; set; }
         public int Estacionamento { get; set; }
+
+        [Display(Name = "Área Útil (m²)")]
         public double AreaUtil { get; set; }
+
+        [Display(Name = "Área Bruta (m²)")]
+        public double AreaBruta { get; set; } // NOVO CAMPO NUMÉRICO
+
+        public int Piso { get; set; } // NOVO CAMPO NUMÉRICO
+
         public int AnoConstrucao { get; set; }
         public int NumeroFrentes { get; set; }
 
@@ -26,7 +35,6 @@ namespace SharpEstate.Models
         public string? Concelho { get; set; }
         public string? Freguesia { get; set; }
         public string? Zona { get; set; }
-
 
         // --- DADOS PRIVADOS (SÓ O CONSULTOR VÊ) ---
         [Display(Name = "Morada Exata (Privado)")]
@@ -38,8 +46,11 @@ namespace SharpEstate.Models
         [Display(Name = "Observações Internas")]
         public string? ObservacoesInternas { get; set; }
 
+        [Display(Name = "Comissão Prevista")]
         public decimal? ValorComissao { get; set; }
 
+        [Display(Name = "Data de Registo")]
+        public DateTime DataRegisto { get; set; } = DateTime.Now;
 
         // --- CHAVES ESTRANGEIRAS (LIGAÇÃO AOS CATÁLOGOS E PESSOAS) ---
         public int? CategoriaImovelId { get; set; }
@@ -59,7 +70,6 @@ namespace SharpEstate.Models
 
         public int? ConsultorId { get; set; }
         public virtual Consultor? Consultor { get; set; }
-
 
         // --- LISTAS DE LIGAÇÃO (Muitos-para-Muitos) ---
         public virtual ICollection<FotoImovel> Fotos { get; set; } = new List<FotoImovel>();

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SharpEstate.Data;
@@ -15,7 +16,34 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 104857600; // Aumenta o limite para 100MB (Segurança anti-crash)
+});
+
 var app = builder.Build();
+
+// --- INÍCIO DO BLOCO DE SEED DATA ---
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>(); // Precisamos do contexto da BD
+
+    try
+    {
+        // 1. Injeta os Perfis (Admin, Cliente, Consultor)
+        await DbInitializer.Initialize(services);
+
+        // 2. MAGIA AQUI: Injeta os Catálogos e as Características!
+        await DbInitializer.SeedCatalogoDataAsync(context);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Ocorreu um erro ao popular a base de dados.");
+    }
+}
+// --- FIM DO BLOCO DE SEED DATA ---
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
