@@ -156,19 +156,57 @@ namespace SharpEstate.Controllers
         // POST: Consultors/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Consultores/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Email,Telemovel,LicencaAMI,FotoUrl,IdentityUserId")] Consultor consultor)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Email,Telemovel,LicencaAMI,IdentityUserId")] Consultor consultor, IFormFile? fotoUpload)
         {
             if (id != consultor.Id)
             {
                 return NotFound();
             }
 
+            // Removemos a validação da foto e do user, pois podem não vir preenchidos no form
+            ModelState.Remove("FotoPerfil");
+            ModelState.Remove("ContentTypeFoto");
+            ModelState.Remove("IdentityUserId");
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    // 1. Vamos buscar os dados ORIGINAIS que estão na BD (para não perder a foto)
+                    // Usamos AsNoTracking para não bloquear o Entity Framework
+                    var consultorExistente = await _context.Consultores
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(c => c.Id == id);
+
+                    if (consultorExistente == null) return NotFound();
+
+                    // 2. LÓGICA DA FOTO:
+                    if (fotoUpload != null && fotoUpload.Length > 0)
+                    {
+                        // CASO A: Utilizador carregou uma FOTO NOVA -> Substituímos
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await fotoUpload.CopyToAsync(memoryStream);
+                            consultor.FotoPerfil = memoryStream.ToArray();
+                            consultor.ContentTypeFoto = fotoUpload.ContentType;
+                        }
+                    }
+                    else
+                    {
+                        // CASO B: Não carregou nada -> Mantemos a FOTO ANTIGA
+                        consultor.FotoPerfil = consultorExistente.FotoPerfil;
+                        consultor.ContentTypeFoto = consultorExistente.ContentTypeFoto;
+                    }
+
+                    // 3. Manter o ID do utilizador (Identity) original se não vier do form
+                    if (string.IsNullOrEmpty(consultor.IdentityUserId))
+                    {
+                        consultor.IdentityUserId = consultorExistente.IdentityUserId;
+                    }
+
                     _context.Update(consultor);
                     await _context.SaveChangesAsync();
                 }

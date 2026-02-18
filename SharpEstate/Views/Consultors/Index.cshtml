@@ -1,59 +1,101 @@
 ﻿@model IEnumerable<SharpEstate.Models.Consultor>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Gestão de Consultores";
 }
 
-<h1>Index</h1>
+<div class="container mt-4 mb-5">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nome)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Telemovel)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LicencaAMI)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdentityUserId)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Telemovel)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LicencaAMI)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdentityUserId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-people-fill me-2 text-primary"></i> Equipa de Consultores</h2>
+            <p class="text-muted mb-0 small">Gerir perfis, licenças AMI e contactos da equipa.</p>
+        </div>
+        <div>
+            <a asp-action="Create" class="btn btn-primary fw-bold shadow-sm w-100">
+                <i class="bi bi-person-plus-fill me-1"></i> Novo Consultor
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 bg-body-tertiary text-body">
+        <div class="card-body p-4">
+
+            <div>
+                <table class="table table-hover table-striped align-middle tabela-admin w-100">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="ps-3 d-none d-md-table-cell" style="width: 70px;">Foto</th>
+
+                            <th>Nome</th>
+
+                            <th class="d-none d-md-table-cell" style="width: 130px;">Contacto</th>
+
+                            <th class="d-none d-md-table-cell" style="width: 110px;">Licença</th>
+
+                            <th class="text-end pe-4" style="width: 140px;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            string imagemSrc = "https://via.placeholder.com/50?text=User";
+                            if (item.FotoPerfil != null && item.FotoPerfil.Length > 0)
+                            {
+                                imagemSrc = $"data:{item.ContentTypeFoto};base64,{Convert.ToBase64String(item.FotoPerfil)}";
+                            }
+
+                            <tr>
+                                <td class="ps-3 d-none d-md-table-cell">
+                                    <img src="@imagemSrc" class="rounded-circle shadow-sm object-fit-cover" width="45" height="45" alt="Avatar" />
+                                </td>
+
+                                <td class="fw-bold">
+                                    @Html.DisplayFor(modelItem => item.Nome)
+                                    <div class="small opacity-75 fw-normal text-break">@item.Email</div>
+                                </td>
+
+                                <td class="d-none d-md-table-cell">
+                                    @if (!string.IsNullOrEmpty(item.Telemovel))
+                                    {
+                                        <a href="tel:@item.Telemovel" class="text-decoration-none text-reset fw-bold">
+                                            <i class="bi bi-telephone-fill text-success me-1"></i> @item.Telemovel
+                                        </a>
+                                    }
+                                    else
+                                    {
+
+                                        <span class="opacity-50">-</span>
+                                    }
+                                </td>
+
+                                <td class="d-none d-md-table-cell">
+                                    @if (!string.IsNullOrEmpty(item.LicencaAMI))
+                                    {
+                                        <span class="badge badge-ami">
+                                            AMI: @item.LicencaAMI
+                                        </span>
+                                    }
+                                    else
+                                    {
+
+                                        <span class="badge bg-secondary">N/A</span>
+                                    }
+                                </td>
+
+                                <td class="text-end pe-3">
+                                    <div class="d-flex justify-content-end gap-3">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil-square"></i></a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info" title="Detalhes"><i class="bi bi-eye"></i></a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="Apagar"><i class="bi bi-trash3"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>

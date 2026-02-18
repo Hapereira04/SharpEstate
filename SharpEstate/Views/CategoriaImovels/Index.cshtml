@@ -1,35 +1,49 @@
 ﻿@model IEnumerable<SharpEstate.Models.CategoriaImovel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Gestão de Categorias";
 }
 
-<h1>Index</h1>
+<div class="container mt-4 mb-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-tags me-2 text-primary"></i> Categorias de Imóvel</h2>
+            <p class="text-muted mb-0 small">Faça a gestão das categorias (ex: Apartamento, Moradia, Terreno).</p>
+        </div>
+        <div>
+            <a asp-action="Create" class="btn btn-primary fw-bold shadow-sm w-100">
+                <i class="bi bi-plus-lg me-1"></i> Nova Categoria
+            </a>
+        </div>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nome)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nome)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="card shadow-sm border-0 bg-body-tertiary text-body">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle tabela-admin w-100">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="ps-3">@Html.DisplayNameFor(model => model.Nome)</th>
+                            <th class="text-end pe-4" style="width: 150px;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-3 fw-bold">@Html.DisplayFor(modelItem => item.Nome)</td>
+                                <td class="text-end pe-3">
+                                    <div class="d-flex justify-content-end gap-3">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil-square"></i></a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info"><i class="bi bi-eye"></i></a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
