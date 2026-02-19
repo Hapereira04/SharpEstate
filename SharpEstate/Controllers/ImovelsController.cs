@@ -24,10 +24,15 @@ namespace SharpEstate.Controllers
             _userManager = userManager;
         }
 
-        // GET: Imovels
+        // GET: Imoveis
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Imoveis.Include(i => i.CategoriaImovel).Include(i => i.CertificadoEnergetico).Include(i => i.Consultor).Include(i => i.EstadoImovel).Include(i => i.StatusImovel).Include(i => i.TipoNegocio);
+            var applicationDbContext = _context.Imoveis
+                .Include(i => i.CategoriaImovel)
+                .Include(i => i.EstadoImovel)
+                .Include(i => i.TipoNegocio)
+                .Include(i => i.Fotos);
+
             return View(await applicationDbContext.ToListAsync());
         }
 
