@@ -38,30 +38,25 @@ namespace SharpEstate.Controllers
 
         // GET: Imovels/Details/5
         [AllowAnonymous] // Permite que qualquer pessoa da internet veja o anúncio!
+                         // GET: Imoveis/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            //Vai buscar o imóvel e "puxa" todos os dados associados
             var imovel = await _context.Imoveis
                 .Include(i => i.CategoriaImovel)
-                .Include(i => i.CertificadoEnergetico)
                 .Include(i => i.EstadoImovel)
-                .Include(i => i.StatusImovel)
                 .Include(i => i.TipoNegocio)
-                .Include(i => i.Consultor) // Puxa o Consultor para mostrarmos o cartão dele
-                .Include(i => i.Fotos)     // Puxa a galeria de imagens
+                .Include(i => i.CertificadoEnergetico)
+                .Include(i => i.Consultor)
+                .Include(i => i.Fotos) // Carrega as fotos
+                                       // ESTA É A PARTE QUE FALTA PARA O CCTV APARECER:
                 .Include(i => i.Caracteristicas)
-                    .ThenInclude(ic => ic.Caracteristica) // Puxa os extras (Piscina, Elevador, etc.)
+                    .ThenInclude(ic => ic.Caracteristica)
+                        .ThenInclude(c => c.GrupoCaracteristica)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (imovel == null)
-            {
-                return NotFound();
-            }
+            if (imovel == null) return NotFound();
 
             return View(imovel);
         }
