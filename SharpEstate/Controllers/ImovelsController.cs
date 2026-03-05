@@ -201,6 +201,129 @@ namespace SharpEstate.Controllers
             return View(imovel);
         }
 
+        // POST: Imovels/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Titulo,Preco,Descricao,Quartos,CasasBanho,Estacionamento,AreaUtil,AreaBruta,Piso,AnoConstrucao,NumeroFrentes,Distrito,Concelho,Freguesia,Zona,MoradaExata,NumeroContrato,ObservacoesInternas,ValorComissao,CategoriaImovelId,TipoNegocioId,EstadoImovelId,StatusImovelId,CertificadoEnergeticoId,ConsultorId")] Imovel imovel, List<int> selectedCaracteristicas, List<IFormFile> novasFotos, int? clienteProprietarioId)
+        {
+            if (id != imovel.Id) return NotFound();
+
+            // LER A ORDEM À FORÇA DIRETAMENTE DO HTML! (À prova de falhas)
+            string existingPhotoOrder = Request.Form["existingPhotoOrder"];
+
+            ModelState.Remove("Consultor");
+            ModelState.Remove("CategoriaImovel");
+            ModelState.Remove("TipoNegocio");
+            ModelState.Remove("EstadoImovel");
+            ModelState.Remove("StatusImovel");
+            ModelState.Remove("CertificadoEnergetico");
+            ModelState.Remove("Fotos");
+            ModelState.Remove("Caracteristicas");
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(imovel);
+
+                    // 1. ATUALIZAR AS CARACTERÍSTICAS
+                    var caracteristicasAntigas = _context.ImoveisCaracteristicas.Where(ic => ic.ImovelId == id);
+                    _context.ImoveisCaracteristicas.RemoveRange(caracteristicasAntigas);
+
+                    if (selectedCaracteristicas != null && selectedCaracteristicas.Any())
+                    {
+                        foreach (var caracId in selectedCaracteristicas)
+                        {
+                            _context.ImoveisCaracteristicas.Add(new ImovelCaracteristica { ImovelId = imovel.Id, CaracteristicaId = caracId });
+                        }
+                    }
+
+                    // 2. ATUALIZAR O PROPRIETÁRIO
+                    var propAtual = _context.ImoveisProprietarios.FirstOrDefault(ip => ip.ImovelId == imovel.Id);
+                    if (propAtual != null) _context.ImoveisProprietarios.Remove(propAtual);
+                    if (clienteProprietarioId.HasValue) _context.ImoveisProprietarios.Add(new ImovelProprietario { ImovelId = imovel.Id, ClienteId = clienteProprietarioId.Value });
+
+                    // 3. A MAGIA UNIFICADA: GRAVAR A ORDEM MISTA
+                    if (!string.IsNullOrEmpty(existingPhotoOrder))
+                    {
+                        var itensOrdem = existingPhotoOrder.Split(',').Select(s => s.Trim()).ToList();
+                        int ordemAtual = 1;
+
+                        var listaNovasFotos = novasFotos?.ToList() ?? new List<IFormFile>();
+
+                        foreach (var item in itensOrdem)
+                        {
+                            if (item.StartsWith("old_"))
+                            {
+                                if (int.TryParse(item.Replace("old_", ""), out int fotoId))
+                                {
+                                    var foto = await _context.Fotos.FindAsync(fotoId);
+                                    if (foto != null && foto.ImovelId == id)
+                                    {
+                                        foto.Ordem = ordemAtual;
+                                        _context.Update(foto);
+                                        ordemAtual++;
+                                    }
+                                }
+                            }
+                            else if (item.StartsWith("new_"))
+                            {
+                                if (int.TryParse(item.Replace("new_", ""), out int fileIndex))
+                                {
+                                    if (fileIndex >= 0 && fileIndex < listaNovasFotos.Count)
+                                    {
+                                        var formFile = listaNovasFotos[fileIndex];
+                                        if (formFile.Length > 0 && formFile.ContentType.StartsWith("image/"))
+                                        {
+                                            using (var memoryStream = new MemoryStream())
+                                            {
+                                                await formFile.CopyToAsync(memoryStream);
+                                                var novaFoto = new FotoImovel
+                                                {
+                                                    ImovelId = imovel.Id,
+                                                    DadosImagem = memoryStream.ToArray(),
+                                                    ContentType = formFile.ContentType,
+                                                    Ordem = ordemAtual
+                                                };
+                                                _context.Fotos.Add(novaFoto);
+                                                ordemAtual++;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ImovelExists(imovel.Id))
+                    {
+                        TempData["MensagemErro"] = $"O imóvel REF: SHARP-{imovel.Id:D5} já foi apagado por outro utilizador.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Se falhar a validação, recarrega tudo
+            ViewData["CategoriaImovelId"] = new SelectList(_context.CategoriasImovel, "Id", "Nome", imovel.CategoriaImovelId);
+            ViewData["CertificadoEnergeticoId"] = new SelectList(_context.CertificadosEnergeticos, "Id", "Nome", imovel.CertificadoEnergeticoId);
+            ViewData["ConsultorId"] = new SelectList(_context.Consultores, "Id", "Nome", imovel.ConsultorId);
+            ViewData["EstadoImovelId"] = new SelectList(_context.EstadosImovel, "Id", "Nome", imovel.EstadoImovelId);
+            ViewData["StatusImovelId"] = new SelectList(_context.StatusImoveis, "Id", "Nome", imovel.StatusImovelId);
+            ViewData["TipoNegocioId"] = new SelectList(_context.TiposNegocio, "Id", "Nome", imovel.TipoNegocioId);
+            var proprietarioAtual = _context.ImoveisProprietarios.FirstOrDefault(ip => ip.ImovelId == imovel.Id);
+            ViewData["ListaClientes"] = new SelectList(_context.Clientes, "Id", "Nome", proprietarioAtual?.ClienteId);
+            ViewBag.GruposComCaracteristicas = await _context.GruposCaracteristicas.Include(g => g.Caracteristicas).ToListAsync();
+            ViewBag.CaracteristicasAtuais = selectedCaracteristicas ?? new List<int>();
+
+            return View(imovel);
+        }
+
         // GET: Imovels/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

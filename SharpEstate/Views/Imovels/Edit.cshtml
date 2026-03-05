@@ -314,40 +314,30 @@
     }
 
     <script>
-        // === O CÉREBRO CORRIGIDO DO DRAG & DROP UNIFICADO (EDITAR) ===
         const photoTrack = document.getElementById('photoTrack');
-
-        // Dados para as NOVAS fotos (Uploads)
         let ficheirosEmMemoria = [];
         let fotoIdCounter = 0;
         const dropzone = document.getElementById('dropzone');
         const inputReal = document.getElementById('fotosInputReal');
-        const form = document.getElementById('imovelForm');
-
-        // Elementos do Modal de Zoom
+        const form = document.getElementById('formEdit');
         const zoomImagem = document.getElementById('zoomImagem');
         const zoomModal = new bootstrap.Modal(document.getElementById('fotoZoomModal'));
 
-        // 1. Inicialização: Preparar fotos antigas e atualizar os badges (Capa, etc.)
         document.addEventListener("DOMContentLoaded", () => {
             inicializarDraggablesUnificados();
             updateAllBadges();
-            updateSubmissionData(); // Gera a ordem inicial para o Controlador
+            updateSubmissionData();
         });
 
-        // 2. FUNÇÃO CORE: Unifica Drag & Drop para fotos antigas e novas
         function inicializarDraggablesUnificados() {
-            // Seleciona TUDO o que for arrastável na galeria
             const allDraggables = photoTrack.querySelectorAll('.draggable-element');
             allDraggables.forEach(thumb => {
-                // Remove os listeners antigos para não duplicar se chamarmos isto de novo
                 thumb.removeEventListener('dragstart', handleDragStart);
                 thumb.removeEventListener('dragover', handleDragOver);
                 thumb.removeEventListener('dragleave', handleDragLeave);
                 thumb.removeEventListener('drop', handleDrop);
                 thumb.removeEventListener('dragend', handleDragEnd);
 
-                // Adiciona os listeners táteis
                 thumb.addEventListener('dragstart', handleDragStart);
                 thumb.addEventListener('dragover', handleDragOver);
                 thumb.addEventListener('dragleave', handleDragLeave);
@@ -356,7 +346,6 @@
             });
         }
 
-        // === LÓGICA DO UPLOAD DE NOVAS FOTOS (Igual ao Create) ===
         dropzone.addEventListener('click', () => inputReal.click());
         dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
         dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
@@ -367,7 +356,7 @@
         });
         inputReal.addEventListener('change', (e) => {
             processarNovosFicheiros(e.target.files);
-            inputReal.value = ''; // Limpa para permitir re-upload do mesmo ficheiro
+            inputReal.value = '';
         });
 
         function processarNovosFicheiros(files) {
@@ -376,7 +365,6 @@
                     const reader = new FileReader();
                     reader.readAsDataURL(file);
                     reader.onload = (e) => {
-                        // Desenha a NOVA miniatura instantaneamente
                         criarThumbnailNova(fotoIdCounter++, file, e.target.result);
                     };
                 }
@@ -384,15 +372,11 @@
         }
 
         function criarThumbnailNova(id, file, dataUrl) {
-            // Guarda na RAM para submissão final
             ficheirosEmMemoria.push({ id: id, file: file, dataUrl: dataUrl });
-
             const thumb = document.createElement('div');
             thumb.className = 'photo-thumbnail draggable-element';
             thumb.draggable = true;
-            // Guardamos o ID da RAM para podermos reordenar
             thumb.dataset.novoId = id;
-
             thumb.innerHTML = `
                 <div class="photo-badge bg-primary"></div>
                 <img src="${dataUrl}" alt="Nova Foto">
@@ -401,25 +385,16 @@
                     <button type="button" class="btn btn-sm btn-danger rounded-circle btn-delete" title="Remover" onclick="removerFotoNova(${id})"><i class="bi bi-trash"></i></button>
                 </div>
             `;
-
-            // Adiciona a NOVA foto no FIM da galeria visual
             photoTrack.appendChild(thumb);
-
-            // Ativa o Drag & Drop nela
             inicializarDraggablesUnificados();
-            // Atualiza Capa/Números
             updateAllBadges();
-            // Atualiza Ordem para submissão
             updateSubmissionData();
         }
 
         function removerFotoNova(id) {
-            // Remove da RAM
             ficheirosEmMemoria = ficheirosEmMemoria.filter(f => f.id !== id);
-            // Remove do DOM
             const thumb = photoTrack.querySelector(`.photo-thumbnail[data-novo-id="${id}"]`);
             if(thumb) thumb.remove();
-
             updateAllBadges();
             updateSubmissionData();
         }
@@ -429,55 +404,61 @@
             zoomModal.show();
         }
 
-        // === GESTÃO DOS BADGES (Capa, Número) E DA SUBMISSÃO ===
-
-        // FUNÇÃO CORE: Atualiza os badges "Capa" ou o número com base na ordem visual do DOM
         function updateAllBadges() {
             const allDraggables = photoTrack.querySelectorAll('.draggable-element');
             allDraggables.forEach((thumb, index) => {
                 const badge = thumb.querySelector('.photo-badge');
                 if(!badge) return;
-
                 if (index === 0) {
                     badge.innerHTML = '<i class="bi bi-star-fill text-warning"></i> Capa';
-                    badge.classList.remove('bg-secondary');
-                    badge.classList.add('bg-primary');
+                    badge.className = 'photo-badge bg-primary';
                 } else {
                     badge.innerHTML = (index + 1);
-                    badge.classList.remove('bg-primary');
-                    badge.classList.add('bg-secondary');
+                    badge.className = 'photo-badge bg-secondary';
                 }
             });
         }
 
-        // FUNÇÃO CORE: Gera os dados ordenados para o Controlador (tanto antigas como novas)
         function updateSubmissionData() {
-            // 1. Fotos EXISTENTES: Gerar a string "ids, ids, ids" baseada na ordem visual
-            const existingPhotosInDom = photoTrack.querySelectorAll('.photo-thumbnail[data-foto-id]');
-            const existingIdsOrdered = Array.from(existingPhotosInDom).map(thumb => thumb.dataset.fotoId);
-            document.getElementById('existingPhotoOrder').value = existingIdsOrdered.join(',');
+            const finalOrder = [];
+            let newFileIndex = 0;
+            const dt = new DataTransfer();
 
-            // Nota: As NOVAS fotos não precisam de string, vão no Input File já na ordem visual
-            // (A Lógica do handleDrop e do Form Submit tratam disso abaixo)
+            const allDraggables = photoTrack.querySelectorAll('.draggable-element');
+
+            allDraggables.forEach(thumb => {
+                if (thumb.dataset.fotoId) {
+                    finalOrder.push('old_' + thumb.dataset.fotoId);
+                } else if (thumb.dataset.novoId) {
+                    finalOrder.push('new_' + newFileIndex);
+                    newFileIndex++;
+
+                    const novoId = parseInt(thumb.dataset.novoId);
+                    const itemData = ficheirosEmMemoria.find(item => item.id === novoId);
+                    if(itemData && itemData.file) {
+                        dt.items.add(itemData.file);
+                    }
+                }
+            });
+
+            document.getElementById('existingPhotoOrder').value = finalOrder.join(',');
+            document.getElementById('fotosInputReal').files = dt.files;
+            console.log("Mapa Gerado: ", finalOrder.join(',')); // Para debug se for preciso!
         }
 
-        // === LÓGICA TÁTIL DO DRAG & DROP (TUDO EM DOM) ===
         let itemArrastado = null;
 
         function handleDragStart(e) {
             itemArrastado = this;
             this.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
-            // Necessário para Firefox
             e.dataTransfer.setData('text/plain', '');
         }
 
         function handleDragOver(e) {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
-
             if(itemArrastado !== this) {
-                // Adiciona efeito visual no item onde vamos largar
                 this.classList.add('drag-over');
             }
             return false;
@@ -493,10 +474,17 @@
             this.classList.remove('drag-over');
 
             if (itemArrastado !== this) {
-                // Tira a miniatura do sítio antigo e insere antes da foto onde largámos
-                photoTrack.insertBefore(itemArrastado, this);
+                // A NOVA MATEMÁTICA DE TROCA (Mais robusta)
+                const all = Array.from(photoTrack.querySelectorAll('.draggable-element'));
+                const arrastadoIndex = all.indexOf(itemArrastado);
+                const alvoIndex = all.indexOf(this);
 
-                // Mágica tálica feita! Agora atualizamos os badges e os dados para submissão
+                if (arrastadoIndex < alvoIndex) {
+                    this.after(itemArrastado); // Move para a frente
+                } else {
+                    this.before(itemArrastado); // Move para trás
+                }
+
                 updateAllBadges();
                 updateSubmissionData();
             }
@@ -505,36 +493,12 @@
 
         function handleDragEnd() {
             this.classList.remove('dragging');
-            // Limpa todos os hover states por segurança
             photoTrack.querySelectorAll('.photo-thumbnail').forEach(el => el.classList.remove('drag-over'));
         }
 
-        // === SUBMISSÃO FINAL DO FORMULÁRIO ===
-        form.addEventListener('submit', (e) => {
-            const dt = new DataTransfer();
-
-            // 1. O Controlador já sabe a ordem das FOTOS EXISTENTES via campo escondido.
-
-            // 2. NOVAS FOTOS: Temos de enviá-las no Input File RESPEITANDO A ORDEM VISUAL DO DOM.
-            const allDraggables = photoTrack.querySelectorAll('.draggable-element');
-
-            allDraggables.forEach(thumb => {
-                // Se esta foto no DOM for uma foto NOVA (data-novo-id)
-                if(thumb.dataset.novoId) {
-                    const novoId = parseInt(thumb.dataset.novoId);
-                    // Busca o ficheiro real na RAM correspondente ao ID
-                    const itemData = ficheirosEmMemoria.find(item => item.id === novoId);
-                    if(itemData && itemData.file) {
-                        // Adiciona-o ao DataTransfer na sequência visual
-                        dt.items.add(itemData.file);
-                    }
-                }
-            });
-
-            // Substitui os ficheiros originais do input file pelos nossos novos ficheiros ordenados
-            inputReal.files = dt.files;
-
-            // Agora o .Net recebe 'novasFotos' na ordem visual e 'existingPhotoOrder' com a nova ordem!
+        // O SEGURO DE VIDA: Força a atualização do mapa no momento do clique no botão Guardar!
+        form.addEventListener('submit', function() {
+            updateSubmissionData();
         });
     </script>
 }
