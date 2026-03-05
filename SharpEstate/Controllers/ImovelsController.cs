@@ -58,6 +58,12 @@ namespace SharpEstate.Controllers
 
             if (imovel == null) return NotFound();
 
+            // Vai descobrir quem é o proprietário atual deste imóvel
+            var proprietarioAtual = await _context.ImoveisProprietarios.FirstOrDefaultAsync(ip => ip.ImovelId == id);
+
+            // Carrega a lista de Clientes e já deixa selecionado o dono atual!
+            ViewData["ListaClientes"] = new SelectList(_context.Clientes, "Id", "Nome", proprietarioAtual?.ClienteId);
+
             return View(imovel);
         }
 
@@ -166,63 +172,32 @@ namespace SharpEstate.Controllers
         // GET: Imovels/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var imovel = await _context.Imoveis.FindAsync(id);
-            if (imovel == null)
-            {
-                return NotFound();
-            }
+            // 1. Ir buscar o imóvel e CARREGAR as Fotos e Características
+            var imovel = await _context.Imoveis
+                .Include(i => i.Fotos)
+                .Include(i => i.Caracteristicas)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (imovel == null) return NotFound();
+
+            // 2. Dropdowns Normais
             ViewData["CategoriaImovelId"] = new SelectList(_context.CategoriasImovel, "Id", "Nome", imovel.CategoriaImovelId);
             ViewData["CertificadoEnergeticoId"] = new SelectList(_context.CertificadosEnergeticos, "Id", "Nome", imovel.CertificadoEnergeticoId);
             ViewData["ConsultorId"] = new SelectList(_context.Consultores, "Id", "Nome", imovel.ConsultorId);
             ViewData["EstadoImovelId"] = new SelectList(_context.EstadosImovel, "Id", "Nome", imovel.EstadoImovelId);
             ViewData["StatusImovelId"] = new SelectList(_context.StatusImoveis, "Id", "Nome", imovel.StatusImovelId);
             ViewData["TipoNegocioId"] = new SelectList(_context.TiposNegocio, "Id", "Nome", imovel.TipoNegocioId);
-            return View(imovel);
-        }
 
-        // POST: Imovels/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Titulo,Preco,Descricao,Quartos,CasasBanho,Estacionamento,AreaUtil,AnoConstrucao,NumeroFrentes,Distrito,Concelho,Freguesia,Zona,MoradaExata,NumeroContrato,ObservacoesInternas,ValorComissao,CategoriaImovelId,TipoNegocioId,EstadoImovelId,StatusImovelId,CertificadoEnergeticoId,ConsultorId")] Imovel imovel)
-        {
-            if (id != imovel.Id)
-            {
-                return NotFound();
-            }
+            // 3. Buscar os Grupos e Características para os Checkboxes
+            ViewBag.GruposComCaracteristicas = await _context.GruposCaracteristicas
+                .Include(g => g.Caracteristicas)
+                .ToListAsync();
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(imovel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ImovelExists(imovel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CategoriaImovelId"] = new SelectList(_context.CategoriasImovel, "Id", "Nome", imovel.CategoriaImovelId);
-            ViewData["CertificadoEnergeticoId"] = new SelectList(_context.CertificadosEnergeticos, "Id", "Nome", imovel.CertificadoEnergeticoId);
-            ViewData["ConsultorId"] = new SelectList(_context.Consultores, "Id", "Nome", imovel.ConsultorId);
-            ViewData["EstadoImovelId"] = new SelectList(_context.EstadosImovel, "Id", "Nome", imovel.EstadoImovelId);
-            ViewData["StatusImovelId"] = new SelectList(_context.StatusImoveis, "Id", "Nome", imovel.StatusImovelId);
-            ViewData["TipoNegocioId"] = new SelectList(_context.TiposNegocio, "Id", "Nome", imovel.TipoNegocioId);
+            // 4. PROTEÇÃO ANTI-CRASH: O '?' garante que se não houver características, ele devolve uma lista vazia sem crachar o site!
+            ViewBag.CaracteristicasAtuais = imovel.Caracteristicas?.Select(c => c.CaracteristicaId).ToList() ?? new List<int>();
+
             return View(imovel);
         }
 
