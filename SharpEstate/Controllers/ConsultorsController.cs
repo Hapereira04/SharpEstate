@@ -252,13 +252,23 @@ namespace SharpEstate.Controllers
             var consultor = await _context.Consultores.FindAsync(id);
             if (consultor != null)
             {
+                // 1. Antes de apagar a ficha, apaga o Login do Identity associado!
+                if (!string.IsNullOrEmpty(consultor.IdentityUserId))
+                {
+                    var user = await _userManager.FindByIdAsync(consultor.IdentityUserId);
+                    if (user != null)
+                    {
+                        await _userManager.DeleteAsync(user);
+                    }
+                }
+
+                // 2. Apaga a ficha da BD
                 _context.Consultores.Remove(consultor);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
         private bool ConsultorExists(int id)
         {
             return _context.Consultores.Any(e => e.Id == id);
