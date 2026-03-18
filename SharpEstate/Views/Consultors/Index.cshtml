@@ -1,101 +1,116 @@
 ﻿@model IEnumerable<SharpEstate.Models.Consultor>
 
 @{
-    ViewData["Title"] = "Gestão de Consultores";
+    ViewData["Title"] = "Equipa de Consultores";
 }
 
 <div class="container mt-4 mb-5">
 
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <div>
-            <h2 class="fw-bold mb-1"><i class="bi bi-people-fill me-2 text-primary"></i> Equipa de Consultores</h2>
-            <p class="text-muted mb-0 small">Gerir perfis, licenças AMI e contactos da equipa.</p>
+            <h2 class="fw-bold mb-1"><i class="bi bi-people-fill text-primary me-2"></i> @ViewData["Title"]</h2>
+            <p class="text-body-secondary mb-0">Gestão dos membros da equipa e acessos ao sistema</p>
         </div>
         <div>
-            <a asp-action="Create" class="btn btn-primary fw-bold shadow-sm w-100">
-                <i class="bi bi-person-plus-fill me-1"></i> Novo Consultor
+            <a asp-action="Create" class="btn btn-primary fw-bold shadow-sm">
+                <i class="bi bi-plus-lg me-1"></i> Adicionar Consultor
             </a>
         </div>
     </div>
 
-    <div class="card shadow-sm border-0 bg-body-tertiary text-body">
-        <div class="card-body p-4">
-
-            <div>
-                <table class="table table-hover table-striped align-middle tabela-admin w-100">
-                    <thead class="table-dark">
-                        <tr>
-                            <th class="ps-3 d-none d-md-table-cell" style="width: 70px;">Foto</th>
-
-                            <th>Nome</th>
-
-                            <th class="d-none d-md-table-cell" style="width: 130px;">Contacto</th>
-
-                            <th class="d-none d-md-table-cell" style="width: 110px;">Licença</th>
-
-                            <th class="text-end pe-4" style="width: 140px;">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            string imagemSrc = "https://via.placeholder.com/50?text=User";
-                            if (item.FotoPerfil != null && item.FotoPerfil.Length > 0)
-                            {
-                                imagemSrc = $"data:{item.ContentTypeFoto};base64,{Convert.ToBase64String(item.FotoPerfil)}";
-                            }
-
-                            <tr>
-                                <td class="ps-3 d-none d-md-table-cell">
-                                    <img src="@imagemSrc" class="rounded-circle shadow-sm object-fit-cover" width="45" height="45" alt="Avatar" />
-                                </td>
-
-                                <td class="fw-bold">
-                                    @Html.DisplayFor(modelItem => item.Nome)
-                                    <div class="small opacity-75 fw-normal text-break">@item.Email</div>
-                                </td>
-
-                                <td class="d-none d-md-table-cell">
-                                    @if (!string.IsNullOrEmpty(item.Telemovel))
-                                    {
-                                        <a href="tel:@item.Telemovel" class="text-decoration-none text-reset fw-bold">
-                                            <i class="bi bi-telephone-fill text-success me-1"></i> @item.Telemovel
-                                        </a>
-                                    }
-                                    else
-                                    {
-
-                                        <span class="opacity-50">-</span>
-                                    }
-                                </td>
-
-                                <td class="d-none d-md-table-cell">
-                                    @if (!string.IsNullOrEmpty(item.LicencaAMI))
-                                    {
-                                        <span class="badge badge-ami">
-                                            AMI: @item.LicencaAMI
-                                        </span>
-                                    }
-                                    else
-                                    {
-
-                                        <span class="badge bg-secondary">N/A</span>
-                                    }
-                                </td>
-
-                                <td class="text-end pe-3">
-                                    <div class="d-flex justify-content-end gap-3">
-                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil-square"></i></a>
-                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info" title="Detalhes"><i class="bi bi-eye"></i></a>
-                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="Apagar"><i class="bi bi-trash3"></i></a>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+    @if (!Model.Any())
+    {
+        <div class="card shadow-sm border-secondary-subtle text-center p-5">
+            <div class="card-body">
+                <i class="bi bi-person-x text-body-tertiary" style="font-size: 4rem;"></i>
+                <h4 class="mt-3 fw-bold">Nenhum consultor encontrado</h4>
+                <p class="text-body-secondary">Ainda não existem membros da equipa registados no sistema.</p>
+                <a asp-action="Create" class="btn btn-outline-primary mt-2 fw-bold">Adicionar o Primeiro Consultor</a>
             </div>
-
         </div>
-    </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var item in Model)
+            {
+                // Preparar a foto (se existir)
+                string fotoBase64 = "";
+                if (item.FotoPerfil != null && item.FotoPerfil.Length > 0)
+                {
+                    string tipo = string.IsNullOrEmpty(item.ContentTypeFoto) ? "image/jpeg" : item.ContentTypeFoto;
+                    fotoBase64 = $"data:{tipo};base64,{Convert.ToBase64String(item.FotoPerfil)}";
+                }
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-secondary-subtle hover-shadow transition-all">
+                        <div class="card-body text-center p-4">
+
+                            <div class="mb-3 mx-auto position-relative" style="width: 100px; height: 100px;">
+                                @if (!string.IsNullOrEmpty(fotoBase64))
+                                {
+                                    <img src="@fotoBase64" class="rounded-circle object-fit-cover shadow-sm border border-3 border-secondary-subtle" style="width: 100%; height: 100%;" alt="Foto de @item.Nome">
+                                }
+                                else
+                                {
+                                    <div class="rounded-circle bg-body-tertiary d-flex align-items-center justify-content-center border border-3 border-secondary-subtle shadow-sm" style="width: 100%; height: 100%;">
+                                        <i class="bi bi-person-fill text-body-secondary fs-1"></i>
+                                    </div>
+                                }
+                            </div>
+
+                            <h5 class="fw-bold text-body-emphasis mb-1">@item.Nome</h5>
+                            <p class="small text-body-secondary mb-3">
+                                @if (!string.IsNullOrEmpty(item.LicencaAMI))
+                                {
+                                    <span class="badge bg-secondary text-white">AMI-@item.LicencaAMI</span>
+                                }
+                                else
+                                {
+                                    <span class="badge border border-secondary text-body-secondary">Sem AMI Própria</span>
+                                }
+                            </p>
+
+                            <div class="d-flex flex-column gap-2 text-start bg-body-tertiary p-3 rounded border border-secondary-subtle">
+                                <div class="small d-flex align-items-center text-truncate" title="@item.Email">
+                                    <i class="bi bi-envelope-at text-primary me-2"></i>
+                                    <span class="text-truncate">@item.Email</span>
+                                </div>
+                                <div class="small d-flex align-items-center">
+                                    <i class="bi bi-telephone text-success me-2"></i>
+                                    <span>@(string.IsNullOrEmpty(item.Telemovel) ? "Sem número" : item.Telemovel)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-transparent border-top border-secondary-subtle p-3">
+                            <div class="btn-group w-100 shadow-sm" role="group">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm fw-bold" title="Editar">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-secondary btn-sm fw-bold" title="Ver Perfil">
+                                    <i class="bi bi-person-vcard"></i> Detalhes
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm fw-bold" title="Apagar">
+                                    <i class="bi bi-trash3"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 </div>
+
+<style>
+    /* Efeito suave ao passar o rato por cima do cartão */
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+    }
+
+    .transition-all {
+        transition: all 0.3s ease-in-out;
+    }
+</style>
