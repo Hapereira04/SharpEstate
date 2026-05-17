@@ -1,39 +1,50 @@
 ﻿@model SharpEstate.Models.Caracteristica
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Característica";
 }
 
-<h1>Edit</h1>
+<div class="container mt-4 mb-5 d-flex justify-content-center">
+    <div class="col-md-8 col-lg-6">
 
-<h4>Caracteristica</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
+        <div class="mb-4 text-center">
+            <h2 class="fw-bold mb-1"><i class="bi bi-pencil-square text-primary me-2"></i> @ViewData["Title"]</h2>
+            <p class="text-body-secondary mb-0">Atualize os dados deste registo.</p>
+        </div>
+
+        <div class="card shadow-sm border-0 border-top border-5 border-primary">
+            <div class="card-body p-4 p-md-5">
+
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger shadow-sm"></div>
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="form-floating mb-4">
+                        <input asp-for="Nome" class="form-control form-control-lg border-primary shadow-sm" placeholder="Nome" autofocus />
+                        <label asp-for="Nome" class="text-body-secondary fw-bold">Nome da Característica <span class="text-danger">*</span></label>
+                        <span asp-validation-for="Nome" class="text-danger small fw-bold"></span>
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        <select asp-for="GrupoCaracteristicaId" class="form-select border-primary shadow-sm" asp-items="ViewBag.GrupoCaracteristicaId"></select>
+                        <label asp-for="GrupoCaracteristicaId" class="text-body-secondary fw-bold">Grupo / Categoria <span class="text-danger">*</span></label>
+                        <span asp-validation-for="GrupoCaracteristicaId" class="text-danger small fw-bold"></span>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a asp-action="Index" class="btn btn-outline-secondary fw-bold px-4 shadow-sm"><i class="bi bi-arrow-left me-1"></i> Cancelar</a>
+                        <button type="submit" class="btn btn-primary fw-bold px-4 shadow-sm"><i class="bi bi-save me-1"></i> Guardar Alterações</button>
+                    </div>
+                </form>
+
             </div>
-            <div class="form-group">
-                <label asp-for="GrupoCaracteristicaId" class="control-label"></label>
-                <select asp-for="GrupoCaracteristicaId" class="form-control" asp-items="ViewBag.GrupoCaracteristicaId"></select>
-                <span asp-validation-for="GrupoCaracteristicaId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
+
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
