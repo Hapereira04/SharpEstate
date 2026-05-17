@@ -124,12 +124,18 @@ namespace SharpEstate.Controllers
                 return NotFound();
             }
 
+            // Usamos o .Include(m => m.Imoveis) para ele trazer a "mochila" de imóveis junto com a categoria
             var categoriaImovel = await _context.CategoriasImovel
+                .Include(m => m.Imoveis)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (categoriaImovel == null)
             {
                 return NotFound();
             }
+
+            // Agora é só contar os imóveis que vieram dentro dela! Sem erros de nomes!
+            ViewBag.TotalImoveis = categoriaImovel.Imoveis.Count;
 
             return View(categoriaImovel);
         }
