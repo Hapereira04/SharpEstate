@@ -130,13 +130,19 @@ namespace SharpEstate.Controllers
                 return NotFound();
             }
 
+            // 1. Usamos o nome correto do DbSet: CaracteristicasCatalogo
+            // 2. Incluímos a tabela de ligação: ImoveisCaracteristicas
             var caracteristica = await _context.CaracteristicasCatalogo
-                .Include(c => c.GrupoCaracteristica)
+                .Include(m => m.ImoveisCaracteristicas)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (caracteristica == null)
             {
                 return NotFound();
             }
+
+            // 3. Contamos os registos na tabela de ligação para saber o impacto!
+            ViewBag.TotalImoveis = caracteristica.ImoveisCaracteristicas?.Count ?? 0;
 
             return View(caracteristica);
         }

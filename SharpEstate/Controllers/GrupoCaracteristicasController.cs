@@ -116,7 +116,7 @@ namespace SharpEstate.Controllers
             return View(grupoCaracteristica);
         }
 
-        // GET: GrupoCaracteristicas/Delete/5
+        // GET: GruposCaracteristicas/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -125,11 +125,16 @@ namespace SharpEstate.Controllers
             }
 
             var grupoCaracteristica = await _context.GruposCaracteristicas
+                .Include(m => m.Caracteristicas) // Traz as características que pertencem a este grupo
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (grupoCaracteristica == null)
             {
                 return NotFound();
             }
+
+            // Passa para a vista quantas características estão dentro deste grupo
+            ViewBag.TotalCaracteristicas = grupoCaracteristica.Caracteristicas?.Count ?? 0;
 
             return View(grupoCaracteristica);
         }
