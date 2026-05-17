@@ -125,11 +125,15 @@ namespace SharpEstate.Controllers
             }
 
             var statusImovel = await _context.StatusImoveis
+                .Include(m => m.Imoveis)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (statusImovel == null)
             {
                 return NotFound();
             }
+
+            ViewBag.TotalImoveis = statusImovel.Imoveis.Count;
 
             return View(statusImovel);
         }
