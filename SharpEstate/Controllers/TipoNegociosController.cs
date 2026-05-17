@@ -124,12 +124,18 @@ namespace SharpEstate.Controllers
                 return NotFound();
             }
 
-            var tipoNegocio = await _context.TiposNegocio
-                .FirstOrDefaultAsync(m => m.Id == id);
+            // Usamos o Include para carregar a lista de Imóveis associados
+            var tipoNegocio = await _context.TiposNegocio // Confirme se não é outra grafia no DbContext
+            .Include(m => m.Imoveis)
+            .FirstOrDefaultAsync(m => m.Id == id);
+
             if (tipoNegocio == null)
             {
                 return NotFound();
             }
+
+            // Contamos os imóveis dentro da coleção
+            ViewBag.TotalImoveis = tipoNegocio.Imoveis.Count;
 
             return View(tipoNegocio);
         }
