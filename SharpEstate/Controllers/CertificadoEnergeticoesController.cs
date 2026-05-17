@@ -125,11 +125,15 @@ namespace SharpEstate.Controllers
             }
 
             var certificadoEnergetico = await _context.CertificadosEnergeticos
+                .Include(m => m.Imoveis)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (certificadoEnergetico == null)
             {
                 return NotFound();
             }
+
+            ViewBag.TotalImoveis = certificadoEnergetico.Imoveis.Count;
 
             return View(certificadoEnergetico);
         }
